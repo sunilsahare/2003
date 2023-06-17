@@ -3,37 +3,45 @@ package com.jwt.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import com.jwt.repo.UserRepository;
+import com.jwt.service.JWTService;
+
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Configuration
 public class AppConfig {
 
+	private final JWTService jwtService;
+
 	@Bean
 	public UserDetailsService userDetailsService() {
-		UserDetails user1 = User.builder().username("sunil").password(passwordEncoder().encode("sunil")).roles("ADMIN")
-				.build();
-		UserDetails user2 = User.builder().username("sunny").password(passwordEncoder().encode("sunny")).roles("ADMIN")
-				.build();
+		return username -> jwtService.loadUserByUsername(username);
+	}
 
-		UserDetails user3 = User.builder().username("animesh").password(passwordEncoder().encode("animesh"))
-				.roles("ADMIN").build();
-		return new InMemoryUserDetailsManager(user1, user2, user3);
+	@Bean
+	public AuthenticationProvider authenticationProvider() {
+		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+		authProvider.setUserDetailsService(userDetailsService());
+		authProvider.setPasswordEncoder(passwordEncoder());
+		return authProvider;
+	}
+
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+		return config.getAuthenticationManager();
 	}
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
-	}
-
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {
-		return builder.getAuthenticationManager();
 	}
 
 }

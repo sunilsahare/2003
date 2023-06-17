@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jwt.dto.UserDto;
-import com.jwt.models.User;
 import com.jwt.service.UserService;
 
 @RestController
@@ -29,5 +28,15 @@ public class HomeController {
 	@GetMapping("/loginUser")
 	public ResponseEntity<String> getLoggedInUsers(Principal principal) {
 		return ResponseEntity.ok(principal.getName());
+	}
+
+	@GetMapping("/demo")
+	public ResponseEntity<String> message() {
+		return ResponseEntity.ok("We are working on JWT Authentication.");
+	}
+
+	@GetMapping("/test")
+	public ResponseEntity<String> test() {
+		return ResponseEntity.ok("Secured API with JWT.");
 	}
 }

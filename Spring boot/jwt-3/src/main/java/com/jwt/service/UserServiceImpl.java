@@ -1,26 +1,46 @@
 package com.jwt.service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.jwt.DtoUtil.UserDtoHeper;
+import com.jwt.dto.UserDto;
+import com.jwt.exception.BusinessException;
 import com.jwt.models.User;
+import com.jwt.repo.UserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-	private List<User> users = new ArrayList<>();
-	
-	public UserServiceImpl() {
-		users.add(User.builder().userId(UUID.randomUUID().toString()).name("Sunil Shaare").email("sunil.sahare@ss.com").build());
-		users.add(User.builder().userId(UUID.randomUUID().toString()).name("Trishul Ingle").email("trishul@ss.com").build());
-		users.add(User.builder().userId(UUID.randomUUID().toString()).name("Akshay").email("akshay@ss.com").build());
+	private final UserRepository userRepository;
+
+	@Override
+	public List<UserDto> getUsers() {
+		return UserDtoHeper.convertToDTOList(userRepository.findAll());
 	}
 
 	@Override
-	public List<User> getUsers() {
-		return this.users;
+	public UserDto addUser(UserDto user) {
+		User userToBeSaved = UserDtoHeper.userDtoToEntity(user);
+		System.err.println(userToBeSaved);
+		boolean isUserExists = userRepository.findByUserId(userToBeSaved.getUserId()).isPresent();
+		if (isUserExists)
+			throw new BusinessException("Please choose another userId !!!");
+
+		User savedUser = userRepository.save(userToBeSaved);
+		UserDto savedUserDto = UserDtoHeper.userEntityToDto(savedUser);
+		return savedUserDto;
 	}
+
+	@Override
+	public UserDto getUser(String userId) {
+		User user = userRepository.findByUserId(userId)
+				.orElseThrow(() -> new BusinessException("User not found. Invalid userId '" + userId + "'"));
+		return UserDtoHeper.userEntityToDto(user);
+	}
+
 }
