@@ -1,0 +1,51 @@
+Kafka Notes
+-----------------------------------
+1. What is Apache Kafka?
+   Apache Kafka is like a communication system that,
+   helps diffrent parts of computer system exchage data by publishing and subscribing topics. 
+   
+2. Why?
+   a. High throughput
+   b. Fault tolerance (Replication)
+   c. Durable
+   d. Scalable
+
+3. Kafka Architecture.
+   
+4. Start Zookeeper
+
+   a. Go to Kafka directory and open terminal.
+   b. Write below command to start zookeeper
+		Command => bin\windows\zookeeper-server-start.bat config\zookeeper.properties
+   c. Now Start the Kafka Server. Open terminal and write below command
+		Command => bin\windows\kafka-server-start.bat config\server.properties
+
+5. Use Kafka with Console
+   a. Create new topic with kafka-topics
+   b. Produce example message with Kafka console Producer
+   c. Consume the Message with Kafka console consumer
+
+   Ex: 1. Create Topic with following command/ WRITE SOME EVENTS INTO THE TOPIC
+	    Command => bin\windows\kafka-topics.bat --create --topic user-topic --bootstrap-server localhost:9092
+	
+	   2. Now Produce Example message useing following command
+	   Command=> bin\windows\kafka-console-producer.bat --topic user-topic --bootstrap-server localhost:9092
+	   
+	   Once we entered above commandthen it allow us to produce message, so write any message and press enter.
+	   
+	   3. Consume the Message/READ THE EVENTS
+		  Provide the following command to consume message
+		  Command => bin\windows\kafka-console-consumer.bat --topic user-topic --from-beginning --bootstrap-server localhost:9092
+
+
+
+6. Stop Kafka Server
+	Command => bin\windows\kafka-server-stop.bat
+	
+7. Stop Zookeeper
+	Command => bin\windows\zookeeper-server-stop.bat
+
+
+		
+   
+
